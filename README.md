@@ -21,9 +21,9 @@ Or<br />
 ## Sample ##
 
 Now i want to download "proxy switchysharp"<br />
-it's url is "https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm"<br />
-it's id is "dpplabbmogkhghncfbfdeeokoefdjegm"<br />
-i can download it like this<br />
+It's url is "https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm"<br />
+It's id is "dpplabbmogkhghncfbfdeeokoefdjegm"<br />
+I can download it like this<br />
 
 ```python crx.py https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm```<br />
 Or<br />
