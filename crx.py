@@ -59,7 +59,7 @@ else:
 if '%' in crx_name:
     crx_name = urllib.unquote(crx_name)
 
-download_url = 'https://clients2.google.com/service/update2/crx?response=redirect&prodversion=37.0.2062.3&x=id%3D' + crx_id + '%26installsource%3Dondemand%26uc'
+download_url = 'https://clients2.google.com/service/update2/crx?response=redirect&x=id%3D' + crx_id + '%26uc'
 
 if proxy:
     opener = urllib2.build_opener(urllib2.ProxyHandler({'https':proxy}))
