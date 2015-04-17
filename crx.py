@@ -1,100 +1,54 @@
-﻿#coding:utf-8
-import urllib, urllib2, sys, re, os
+#coding:utf-8
+import requests
+import argparse
+import re
+import os
 
-user_agent = 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.3 Safari/537.36'
-proxy = ''
 
-def savefile():
-    crx = open(unicode(path + '/' + crx_name + crx_version, 'utf-8'), 'wb')
-    crx.write(file)
-    crx.close()
+parser = argparse.ArgumentParser()
+parser.add_argument('-u', help = u'''扩展的地址或者ID，类似
+                                     https://chrome.google.com/webstore/detail/adblock-plus/cfhdojbkjhnklbpkdaibdccddilifddb
+                                     或
+                                     cfhdojbkjhnklbpkdaibdccddilifddb''', required = True)
+parser.add_argument('-p', help = u'''代理地址，类似
+                                     127.0.0.1:8087''')
+args = parser.parse_args()
+
 
 def over():
     print 'Press the Enter key to exit'
     raw_input()
-    sys.exit()
-
-path = sys.path[0]
-if os.path.isfile(path):
-    path = os.path.dirname(path)
-if len(sys.argv) < 2:
-    print """
-    Please add a url parameters. if you're in china, please use proxy.
-
-    sample:
-    python crx.py https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm 127.0.0.1:8087
-    or:
-    python crx.py dpplabbmogkhghncfbfdeeokoefdjegm 127.0.0.1:8087
-    """
-    over()
-
-if len(sys.argv) == 3:
-    proxy = sys.argv[2]
-target = sys.argv[1]
-
-if 'chrome.google.com' in target:
-    tmp = re.findall(r'detail/(.*?)/(\w+)\??', target)
-    if not tmp:
-        print """
-    Please use a correct url or extension ID.
-
-    sample:
-    https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm
-    or:
-    dpplabbmogkhghncfbfdeeokoefdjegm
-    """
-        over()
-    crx_name = tmp[0][0]
-    crx_id = tmp[0][1]
-elif re.match('^[a-z]+$', target):
-    crx_name = 'extension'
-    crx_id = target
-else:
-    print """
-    Please use a correct url or extension ID.
-
-    sample:
-    https://chrome.google.com/webstore/detail/proxy-switchysharp/dpplabbmogkhghncfbfdeeokoefdjegm
-    or:
-    dpplabbmogkhghncfbfdeeokoefdjegm
-    """
-    over()
-
-if '%' in crx_name:
-    crx_name = urllib.unquote(crx_name)
-
-download_url = 'https://clients2.google.com/service/update2/crx?response=redirect&prodversion=37.0.2062.3&x=id%3D' + crx_id + '%26uc'
 
 
-if proxy:
-    opener = urllib2.build_opener(urllib2.ProxyHandler({'https':proxy}))
-else:
-    opener = urllib2.build_opener(urllib2.ProxyHandler({}))
-opener.addheaders = [('User-agent', user_agent)]
+def download():
+    target = args.u
+    proxies = {'http': args.p,
+            'https': args.p,
+    }
 
-try:
-    print 'Downloading...'
-    get_crx = opener.open(download_url, timeout = 30)
-    crx_version = re.findall(r'extension(\w*?.crx)', get_crx.geturl())[0]
-    file = get_crx.read()
-except Exception, e:
-    print e
-    print ''
-    print 'Download failed'
-    if not proxy:
-        print 'Please try to use a proxy'
-    over()
-
-try:
-    savefile()
-except Exception, e:
-    if "'utf8' codec can't decode byte" in str(e):
-        crx_name = crx_name.decode('gbk').encode('utf-8')
-        savefile()
+    if 'chrome.google.com' in target:
+        tmp = re.search(r'detail/(.*?)/(\w+)?', target)
+        if tmp:
+            crx_name = tmp.group(1)
+            crx_id = tmp.group(2)
+    elif re.match('^[a-z]+$', target):
+        crx_name = 'extension'
+        crx_id = target
     else:
-        print e
-        print 'Download failed'
+        print u'请输入正确的链接或ID'
+        return
         over()
 
-print 'Download success to ' + unicode(path + '/' + crx_name + crx_version, 'utf-8')
-over()
+    url = 'https://clients2.google.com/service/update2/crx?response=redirect&prodversion=43.0.2357.10&x=id%3D' + crx_id + '%26installsource%3Dondemand%26uc'
+    print u'下载中，请稍后'
+    r = requests.get(url, proxies = proxies, verify=False)
+    crx_version = re.search(r'extension(\w*?.crx)', r.url).group(1)
+
+    path = os.path.split(os.path.realpath(__file__))[0]
+    with open (path + os.sep + crx_name + crx_version, 'wb') as f:
+        f.write(r.content)
+        print u'下载成功'
+    over()
+
+
+download()
