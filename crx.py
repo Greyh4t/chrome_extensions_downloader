@@ -40,7 +40,7 @@ def download():
         over()
 
     url = 'https://clients2.google.com/service/update2/crx?response=redirect&prodversion=43.0.2357.10&x=id%3D' + crx_id + '%26installsource%3Dondemand%26uc'
-    print u'下载中，请稍后'
+    print u'下载中，请稍后...'
     r = requests.get(url, proxies = proxies, verify=False)
     crx_version = re.search(r'extension(\w*?.crx)', r.url).group(1)
 
