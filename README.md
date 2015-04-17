@@ -6,7 +6,7 @@ It's a tool that can download chrome extensions to your pc and save as *.crx
 ## Requirements ##
 
 * [Python 2.7](https://www.python.org/downloads/) (recommend)
-* [requests](http://www.python-requests.org/en/latest/)
+* [requests](https://pypi.python.org/pypi/requests/)
 * Linux/Mac/Windows
 
 ## How to use ##
